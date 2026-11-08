@@ -21,3 +21,15 @@ export class ValidationError extends AppError {
     super(422, 'VALIDATION_ERROR', message, details);
   }
 }
+
+export class UnauthorizedError extends AppError {
+  constructor(message = 'Autenticação necessária') {
+    super(401, 'UNAUTHORIZED', message);
+  }
+}
+
+export class ForbiddenError extends AppError {
+  constructor(message = 'Você não tem permissão para esta ação') {
+    super(403, 'FORBIDDEN', message);
+  }
+}
