@@ -11,7 +11,8 @@
     "db:up": "docker compose --env-file .env -f ../docker-compose.yml up -d",
     "db:down": "docker compose --env-file .env -f ../docker-compose.yml down",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx --env-file=.env src/database/migrate.ts"
+    "db:migrate": "tsx --env-file=.env src/database/migrate.ts",
+    "db:seed": "tsx --env-file=.env src/database/seed.ts"
   },
   "version": "1.0.0",
   "description": "",
