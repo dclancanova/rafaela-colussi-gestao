@@ -12,7 +12,9 @@
     "db:down": "docker compose --env-file .env -f ../docker-compose.yml down",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx --env-file=.env src/database/migrate.ts",
-    "db:seed": "tsx --env-file=.env src/database/seed.ts"
+    "db:seed": "tsx --env-file=.env src/database/seed.ts",
+    "test:unit": "vitest run --project unit",
+    "test:int": "vitest run --project integration"
   },
   "version": "1.0.0",
   "description": "",
@@ -21,6 +23,7 @@
   "license": "ISC",
   "dependencies": {
     "@node-rs/argon2": "^2.2.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "drizzle-orm": "^0.45.4",
     "express": "^5.3.0",
@@ -30,6 +33,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.6",
