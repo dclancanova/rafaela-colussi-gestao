@@ -5,7 +5,7 @@ import request from 'supertest';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createApp } from '../../app.js';
 import { db } from '../../database/client.js';
-import { sessions, users } from '../../database/schema/index.js';
+import { auditLog, sessions, users } from '../../database/schema/index.js';
 import { errorHandler } from '../../shared/middleware/error-handler.js';
 import { createTestUser, resetDatabase } from '../../test/db.js';
 import { SESSION_COOKIE_NAME } from './auth.cookie.js';
@@ -206,5 +206,52 @@ describe('requireRole', () => {
     const res = await request(protectedApp).get('/admin');
 
     expect(res.status).toBe(401);
+  });
+});
+
+describe('auditoria', () => {
+  it('registra o login bem-sucedido', async () => {
+    const user = await createTestUser();
+
+    await request(app).post('/api/auth/login').send({ email: user.email, password: user.password });
+
+    const entries = await db.select().from(auditLog);
+    expect(entries).toHaveLength(1);
+    expect(entries[0]).toMatchObject({
+      userId: user.id,
+      entityType: 'user',
+      entityId: user.id,
+      action: 'login',
+    });
+  });
+
+  it('não registra login com senha errada', async () => {
+    const user = await createTestUser();
+
+    await request(app).post('/api/auth/login').send({ email: user.email, password: 'senha-errada-123' });
+
+    expect(await db.select().from(auditLog)).toHaveLength(0);
+  });
+
+  it('registra o logout', async () => {
+    const user = await createTestUser();
+    const agent = request.agent(app);
+    await agent.post('/api/auth/login').send({ email: user.email, password: user.password });
+
+    await agent.post('/api/auth/logout');
+
+    const entries = await db.select().from(auditLog).orderBy(auditLog.id);
+    expect(entries.map((entry) => entry.action)).toEqual(['login', 'logout']);
+    expect(entries[1]).toMatchObject({
+      userId: user.id,
+      entityType: 'user',
+      entityId: user.id,
+    });
+  });
+
+  it('não registra logout sem sessão', async () => {
+    await request(app).post('/api/auth/logout');
+
+    expect(await db.select().from(auditLog)).toHaveLength(0);
   });
 });

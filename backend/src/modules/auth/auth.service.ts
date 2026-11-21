@@ -1,6 +1,7 @@
 import { and, eq, gt } from 'drizzle-orm';
 import { db } from '../../database/client.js';
 import { sessions, users } from '../../database/schema/index.js';
+import { recordAudit } from '../../shared/audit.js';
 import { UnauthorizedError } from '../../shared/errors.js';
 import { verifyAgainstDummy, verifyPassword } from './password.js';
 import { calculateExpiry, generateSessionToken, hashSessionToken } from './session-token.js';
@@ -64,6 +65,12 @@ export async function login(email: string, password: string, now: Date = new Dat
       .update(users)
       .set({ lastLoginAt: now, updatedAt: user.updatedAt })
       .where(eq(users.id, user.id));
+    await recordAudit(tx, {
+      userId: user.id,
+      entityType: 'user',
+      entityId: user.id,
+      action: 'login',
+    });
   });
 
   const authUser: AuthUser = { id: user.id, name: user.name, email: user.email, role: user.role };
@@ -92,5 +99,21 @@ export async function findSession(token: string, now: Date = new Date()): Promis
 }
 
 export async function logout(token: string): Promise<void> {
-  await db.delete(sessions).where(eq(sessions.tokenHash, hashSessionToken(token)));
+  await db.transaction(async (tx) => {
+    // .returning() faz o DELETE devolver as linhas apagadas: assim sabemos de quem era a sessão.
+    const [deleted] = await tx
+      .delete(sessions)
+      .where(eq(sessions.tokenHash, hashSessionToken(token)))
+      .returning({ userId: sessions.userId });
+
+    // Token desconhecido ou sessão já apagada: não houve logout de ninguém.
+    if (!deleted) return;
+
+    await recordAudit(tx, {
+      userId: deleted.userId,
+      entityType: 'user',
+      entityId: deleted.userId,
+      action: 'logout',
+    });
+  });
 }

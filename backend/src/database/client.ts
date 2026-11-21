@@ -12,3 +12,8 @@ pool.on('error', (err) => {
 });
 
 export const db = drizzle(pool, { schema });
+
+export type Database = typeof db;
+
+/** O 'tx' recebido dentro de db.transaction(async (tx) => ...). */
+export type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0];
