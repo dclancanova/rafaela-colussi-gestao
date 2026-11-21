@@ -181,7 +181,9 @@ describe('requireRole', () => {
 
   async function loginAs(role: 'admin' | 'member') {
     const user = await createTestUser({ role });
-    const res = await request(app).post('/api/auth/login').send({ email: user.email, password: user.password });
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: user.email, password: user.password });
     return sessionCookie(res)!.split(';')[0]!;
   }
 

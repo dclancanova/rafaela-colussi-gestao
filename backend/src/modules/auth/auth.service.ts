@@ -61,10 +61,7 @@ export async function login(email: string, password: string, now: Date = new Dat
       expiresAt,
     });
     // Login não é edição do cadastro: mantém updated_at como estava.
-    await tx
-      .update(users)
-      .set({ lastLoginAt: now, updatedAt: user.updatedAt })
-      .where(eq(users.id, user.id));
+    await tx.update(users).set({ lastLoginAt: now, updatedAt: user.updatedAt }).where(eq(users.id, user.id));
     await recordAudit(tx, {
       userId: user.id,
       entityType: 'user',
