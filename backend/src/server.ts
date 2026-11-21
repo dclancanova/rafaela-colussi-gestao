@@ -1,8 +1,10 @@
 import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { logger } from './shared/logger.js';
+import { startSessionCleanup } from './modules/auth/session-cleanup.js';
 
 const app = createApp();
+const stopCleanup = startSessionCleanup();
 
 const server = app.listen(env.PORT, () => {
   logger.info(`API rodando em http://localhost:${env.PORT} (${env.NODE_ENV})`);
@@ -10,6 +12,7 @@ const server = app.listen(env.PORT, () => {
 
 function shutdown(signal: string) {
   logger.info(`${signal} recebido, encerrando...`);
+  stopCleanup();
   server.close(() => process.exit(0));
 }
 
