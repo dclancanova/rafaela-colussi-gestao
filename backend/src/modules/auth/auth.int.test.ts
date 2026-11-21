@@ -282,3 +282,36 @@ describe('deleteExpiredSessions', () => {
     expect(await deleteExpiredSessions()).toBe(0);
   });
 });
+
+describe('limite de tentativas de login', () => {
+  it('bloqueia com 429 depois de 10 tentativas falhas, mesmo com a senha certa', async () => {
+    const limitedApp = createApp();
+    const user = await createTestUser();
+
+    for (let attempt = 1; attempt <= 10; attempt++) {
+      const res = await request(limitedApp)
+        .post('/api/auth/login')
+        .send({ email: user.email, password: 'senha-errada-123' });
+      expect(res.status).toBe(401);
+    }
+
+    const blocked = await request(limitedApp)
+      .post('/api/auth/login')
+      .send({ email: user.email, password: user.password });
+
+    expect(blocked.status).toBe(429);
+    expect(blocked.body.error.code).toBe('TOO_MANY_REQUESTS');
+  });
+
+  it('não conta logins bem-sucedidos', async () => {
+    const limitedApp = createApp();
+    const user = await createTestUser();
+
+    for (let attempt = 1; attempt <= 12; attempt++) {
+      const res = await request(limitedApp)
+        .post('/api/auth/login')
+        .send({ email: user.email, password: user.password });
+      expect(res.status).toBe(200);
+    }
+  });
+});

@@ -33,3 +33,9 @@ export class ForbiddenError extends AppError {
     super(403, 'FORBIDDEN', message);
   }
 }
+
+export class TooManyRequestsError extends AppError {
+  constructor(message = 'Muitas tentativas. Aguarde alguns minutos e tente novamente.') {
+    super(429, 'TOO_MANY_REQUESTS', message);
+  }
+}
