@@ -1,4 +1,4 @@
-import { and, eq, gt } from 'drizzle-orm';
+import { and, eq, gt, lte } from 'drizzle-orm';
 import { db } from '../../database/client.js';
 import { sessions, users } from '../../database/schema/index.js';
 import { recordAudit } from '../../shared/audit.js';
@@ -113,4 +113,10 @@ export async function logout(token: string): Promise<void> {
       action: 'logout',
     });
   });
+}
+
+/** Apaga as sessões vencidas (o oposto exato da regra de validade do findSession). */
+export async function deleteExpiredSessions(now: Date = new Date()): Promise<number> {
+  const result = await db.delete(sessions).where(lte(sessions.expiresAt, now));
+  return result.rowCount ?? 0;
 }

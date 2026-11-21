@@ -10,6 +10,7 @@ import { errorHandler } from '../../shared/middleware/error-handler.js';
 import { createTestUser, resetDatabase } from '../../test/db.js';
 import { SESSION_COOKIE_NAME } from './auth.cookie.js';
 import { requireAuth, requireRole } from './auth.middleware.js';
+import { deleteExpiredSessions } from './auth.service.js';
 
 const app = createApp();
 
@@ -226,6 +227,30 @@ describe('auditoria', () => {
       action: 'login',
     });
   });
+
+  describe('deleteExpiredSessions', () => {
+  it('apaga sessões vencidas e no limite, mantendo as válidas', async () => {
+    const user = await createTestUser();
+    const now = new Date('2026-11-21T12:00:00Z');
+    const oneHour = 60 * 60 * 1000;
+
+    await db.insert(sessions).values([
+      { userId: user.id, tokenHash: 'hash-vencida', expiresAt: new Date(now.getTime() - oneHour) },
+      { userId: user.id, tokenHash: 'hash-limite', expiresAt: now },
+      { userId: user.id, tokenHash: 'hash-valida', expiresAt: new Date(now.getTime() + oneHour) },
+    ]);
+
+    const deleted = await deleteExpiredSessions(now);
+
+    expect(deleted).toBe(2);
+    const remaining = await db.select().from(sessions);
+    expect(remaining.map((session) => session.tokenHash)).toEqual(['hash-valida']);
+  });
+
+  it('devolve 0 quando não há sessões vencidas', async () => {
+    expect(await deleteExpiredSessions()).toBe(0);
+  });
+});
 
   it('não registra login com senha errada', async () => {
     const user = await createTestUser();
