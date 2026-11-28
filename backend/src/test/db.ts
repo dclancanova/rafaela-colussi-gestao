@@ -12,7 +12,9 @@ afterAll(async () => {
 });
 
 export async function resetDatabase(): Promise<void> {
-  await db.execute(sql`truncate table audit_log, sessions, users restart identity cascade`);
+  await db.execute(
+    sql`truncate table audit_log, password_reset_tokens, sessions, users restart identity cascade`,
+  );
 }
 
 type NewTestUser = {

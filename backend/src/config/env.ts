@@ -4,6 +4,8 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(3000),
   CORS_ORIGIN: z.url().default('http://localhost:5173'),
+  // Endereço do site (frontend), usado nos links enviados por e-mail.
+  APP_URL: z.url().default('http://localhost:5173'),
   DATABASE_URL: z.string().regex(/^postgres(ql)?:\/\//, 'Deve começar com postgresql://'),
 });
 

@@ -1,19 +1,15 @@
 import { z } from 'zod';
-import { MIN_PASSWORD_LENGTH, hashPassword } from '../modules/auth/password.js';
+import { hashPassword, newPasswordSchema } from '../modules/auth/password.js';
 import { logger } from '../shared/logger.js';
 import { db, pool } from './client.js';
 import { users } from './schema/index.js';
 
-const passwordRule = z
-  .string()
-  .min(MIN_PASSWORD_LENGTH, `A senha deve ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres`);
-
 const seedSchema = z
   .object({
     SEED_DANIELA_EMAIL: z.email().transform((value) => value.toLowerCase()),
-    SEED_DANIELA_PASSWORD: passwordRule,
+    SEED_DANIELA_PASSWORD: newPasswordSchema,
     SEED_RAFAELA_EMAIL: z.email().transform((value) => value.toLowerCase()),
-    SEED_RAFAELA_PASSWORD: passwordRule,
+    SEED_RAFAELA_PASSWORD: newPasswordSchema,
   })
   .refine((data) => data.SEED_DANIELA_EMAIL !== data.SEED_RAFAELA_EMAIL, {
     message: 'Os e-mails da Daniela e da Rafaela devem ser diferentes',

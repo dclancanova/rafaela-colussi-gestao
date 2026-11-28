@@ -1,5 +1,5 @@
 import { and, eq, gt, lte } from 'drizzle-orm';
-import { db } from '../../database/client.js';
+import { db, type Transaction } from '../../database/client.js';
 import { sessions, users } from '../../database/schema/index.js';
 import { recordAudit } from '../../shared/audit.js';
 import { UnauthorizedError } from '../../shared/errors.js';
@@ -119,4 +119,30 @@ export async function logout(token: string): Promise<void> {
 export async function deleteExpiredSessions(now: Date = new Date()): Promise<number> {
   const result = await db.delete(sessions).where(lte(sessions.expiresAt, now));
   return result.rowCount ?? 0;
+}
+
+export type NewPasswordInput = {
+  userId: number;
+  /** Já com hash: o Argon2 é lento, então é calculado antes de abrir a transação. */
+  passwordHash: string;
+  /** Quem fez a troca; null quando foi pelo terminal (script), sem usuária logada. */
+  actorUserId: number | null;
+  via: 'cli' | 'reset_link';
+};
+
+/**
+ * Troca a senha, encerra todas as sessões da usuária e registra na auditoria.
+ * Recebe a transação de quem chama para ficar junto de outras mudanças (ex.: marcar o link como usado).
+ */
+export async function applyNewPassword(tx: Transaction, input: NewPasswordInput): Promise<void> {
+  await tx.update(users).set({ passwordHash: input.passwordHash }).where(eq(users.id, input.userId));
+  // Quem tinha a senha antiga (inclusive um invasor) perde o acesso na hora.
+  await tx.delete(sessions).where(eq(sessions.userId, input.userId));
+  await recordAudit(tx, {
+    userId: input.actorUserId,
+    entityType: 'user',
+    entityId: input.userId,
+    action: 'password_reset',
+    changes: { via: input.via },
+  });
 }

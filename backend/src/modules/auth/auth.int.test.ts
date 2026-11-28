@@ -10,7 +10,8 @@ import { errorHandler } from '../../shared/middleware/error-handler.js';
 import { createTestUser, resetDatabase } from '../../test/db.js';
 import { SESSION_COOKIE_NAME } from './auth.cookie.js';
 import { requireAuth, requireRole } from './auth.middleware.js';
-import { deleteExpiredSessions } from './auth.service.js';
+import { applyNewPassword, deleteExpiredSessions } from './auth.service.js';
+import { hashPassword } from './password.js';
 
 const app = createApp();
 
@@ -313,5 +314,35 @@ describe('limite de tentativas de login', () => {
         .send({ email: user.email, password: user.password });
       expect(res.status).toBe(200);
     }
+  });
+});
+
+describe('applyNewPassword', () => {
+  it('troca a senha, encerra as sessões e registra na auditoria', async () => {
+    const user = await createTestUser();
+    const agent = request.agent(app);
+    await agent.post('/api/auth/login').send({ email: user.email, password: user.password });
+
+    const passwordHash = await hashPassword('senha-nova-segura-1');
+    await db.transaction((tx) =>
+      applyNewPassword(tx, { userId: user.id, passwordHash, actorUserId: null, via: 'cli' }),
+    );
+
+    // A sessão aberta com a senha antiga deixou de valer.
+    expect((await agent.get('/api/auth/me')).status).toBe(401);
+    expect(await db.select().from(sessions)).toHaveLength(0);
+
+    const oldPassword = await request(app)
+      .post('/api/auth/login')
+      .send({ email: user.email, password: user.password });
+    expect(oldPassword.status).toBe(401);
+
+    const newPassword = await request(app)
+      .post('/api/auth/login')
+      .send({ email: user.email, password: 'senha-nova-segura-1' });
+    expect(newPassword.status).toBe(200);
+
+    const [entry] = await db.select().from(auditLog).where(eq(auditLog.action, 'password_reset'));
+    expect(entry).toMatchObject({ userId: null, entityId: user.id, changes: { via: 'cli' } });
   });
 });

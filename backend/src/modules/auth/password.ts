@@ -1,4 +1,5 @@
 import { hash, verify } from '@node-rs/argon2';
+import { z } from 'zod';
 
 // Argon2id é o algoritmo padrão desta biblioteca.
 // Custo de memória (em KiB) e de tempo alinhados às recomendações mínimas atuais da OWASP.
@@ -10,6 +11,14 @@ const ARGON2_OPTIONS = {
 } as const;
 
 export const MIN_PASSWORD_LENGTH = 10;
+// Limite superior evita gastar CPU com hash de textos gigantes.
+export const MAX_PASSWORD_LENGTH = 256;
+
+/** Regra única para senhas novas (seed, script de redefinição e "esqueci minha senha"). */
+export const newPasswordSchema = z
+  .string()
+  .min(MIN_PASSWORD_LENGTH, `A senha deve ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres`)
+  .max(MAX_PASSWORD_LENGTH, 'Senha longa demais');
 
 export function hashPassword(password: string): Promise<string> {
   return hash(password, ARGON2_OPTIONS);

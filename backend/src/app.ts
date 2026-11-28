@@ -5,7 +5,11 @@ import cookieParser from 'cookie-parser';
 import { env } from './config/env.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { healthRouter } from './modules/health/health.routes.js';
-import { createLoginRateLimiter } from './modules/auth/login-rate-limit.js';
+import {
+  createForgotPasswordRateLimiter,
+  createLoginRateLimiter,
+  createResetPasswordRateLimiter,
+} from './modules/auth/auth.rate-limit.js';
 import { notFound } from './shared/middleware/not-found.js';
 import { errorHandler } from './shared/middleware/error-handler.js';
 
@@ -19,6 +23,8 @@ export function createApp() {
 
   app.use('/api/health', healthRouter);
   app.use('/api/auth/login', createLoginRateLimiter());
+  app.use('/api/auth/forgot-password', createForgotPasswordRateLimiter());
+  app.use('/api/auth/reset-password', createResetPasswordRateLimiter());
   app.use('/api/auth', authRouter);
 
   // Estes dois SEMPRE por último, nesta ordem
