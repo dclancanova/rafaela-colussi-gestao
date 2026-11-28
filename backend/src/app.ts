@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import { env } from './config/env.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { healthRouter } from './modules/health/health.routes.js';
+import { recipesRouter } from './modules/recipes/recipes.routes.js';
 import { suppliesRouter } from './modules/supplies/supplies.routes.js';
 import {
   createForgotPasswordRateLimiter,
@@ -28,6 +29,7 @@ export function createApp() {
   app.use('/api/auth/reset-password', createResetPasswordRateLimiter());
   app.use('/api/auth', authRouter);
   app.use('/api/supplies', suppliesRouter);
+  app.use('/api/recipes', recipesRouter);
 
   // Estes dois SEMPRE por último, nesta ordem
   app.use(notFound);

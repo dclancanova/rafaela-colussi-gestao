@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { NotFoundError } from '../../shared/errors.js';
+import { parseIdParam } from '../../shared/route-params.js';
 import { getAuth, requireAuth } from '../auth/auth.middleware.js';
 import {
   createSupply,
@@ -53,12 +53,7 @@ const listQuerySchema = z.object({
   status: z.enum(['active', 'archived', 'all']).default('active'),
 });
 
-/** "/api/supplies/abc" é um endereço que não existe: 404, como qualquer id desconhecido. */
-function parseId(value: string | undefined): number {
-  const parsed = z.coerce.number().int().positive().safeParse(value);
-  if (!parsed.success) throw new NotFoundError('Insumo não encontrado');
-  return parsed.data;
-}
+const parseId = (value: string | undefined) => parseIdParam(value, 'Insumo não encontrado');
 
 export const suppliesRouter = Router();
 

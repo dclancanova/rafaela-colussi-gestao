@@ -1,7 +1,8 @@
 import { api } from '../../lib/api';
+import type { MeasurementUnit } from '../../lib/units';
 
+export type { MeasurementUnit };
 export type SupplyKind = 'ingredient' | 'packaging';
-export type MeasurementUnit = 'g' | 'ml' | 'un';
 export type SupplyStatus = 'active' | 'archived' | 'all';
 
 /** Mesmo formato que o backend devolve em /supplies. */

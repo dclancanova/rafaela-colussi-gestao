@@ -21,7 +21,9 @@ import {
   type SupplyInput,
   type SupplyKind,
 } from './supplies-api';
-import { formatUnitCost, kindLabels, unitLabels } from './supply-format';
+import { formatUnitCost, unitLabels } from '../../lib/units';
+import { recipesKeys } from '../recipes/recipes-api';
+import { kindLabels } from './supply-format';
 
 /** Os campos como texto, do jeito que estão nos inputs; a conversão acontece ao salvar. */
 type FormValues = {
@@ -114,7 +116,11 @@ function SupplyForm({ supply }: { supply: Supply | null }) {
 
   const onSaved = async () => {
     // Listas e detalhes de insumos ficam desatualizados: o próximo acesso busca de novo.
-    await queryClient.invalidateQueries({ queryKey: suppliesKeys.all });
+    // As fichas técnicas também: o custo delas vem do preço dos insumos (decisão AO).
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: suppliesKeys.all }),
+      queryClient.invalidateQueries({ queryKey: recipesKeys.all }),
+    ]);
     navigate('/insumos');
   };
 

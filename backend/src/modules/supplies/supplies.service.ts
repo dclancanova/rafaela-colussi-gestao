@@ -1,6 +1,7 @@
 import { and, asc, eq, type SQL } from 'drizzle-orm';
 import { db } from '../../database/client.js';
-import { measurementUnit, supplies, supplyKind } from '../../database/schema/index.js';
+import { lockRecipeGraph } from '../../database/locks.js';
+import { measurementUnit, recipeItems, recipes, supplies, supplyKind } from '../../database/schema/index.js';
 import { recordAudit } from '../../shared/audit.js';
 import { isUniqueViolation } from '../../shared/database-errors.js';
 import { AppError, NotFoundError } from '../../shared/errors.js';
@@ -105,6 +106,10 @@ export async function updateSupply(
 ): Promise<SupplyDto> {
   try {
     return await db.transaction(async (tx) => {
+      // Trocar a unidade depende de o insumo estar ou não em fichas técnicas: trava o "mapa" de fichas
+      // ANTES da linha do insumo, na mesma ordem que as fichas usam (ordens diferentes = deadlock).
+      if (changes.unit !== undefined) await lockRecipeGraph(tx);
+
       // "for update" trava a linha até o fim da transação: duas edições ao mesmo tempo
       // não leem o mesmo "antes" e a auditoria fica correta.
       const [current] = await tx.select().from(supplies).where(eq(supplies.id, id)).for('update');
@@ -124,6 +129,23 @@ export async function updateSupply(
 
       // Nada mudou: não grava nem audita.
       if (Object.keys(patch).length === 0) return toSupplyDto(current);
+
+      // Decisão AP: as fichas medem este insumo na unidade atual; 300 g não podem virar 300 un.
+      if (patch.unit !== undefined) {
+        const [usage] = await tx
+          .select({ recipeName: recipes.name })
+          .from(recipeItems)
+          .innerJoin(recipes, eq(recipeItems.recipeId, recipes.id))
+          .where(eq(recipeItems.supplyId, id))
+          .limit(1);
+        if (usage) {
+          throw new AppError(
+            409,
+            'SUPPLY_IN_USE',
+            `A unidade não pode mudar: este insumo é usado na ficha técnica "${usage.recipeName}".`,
+          );
+        }
+      }
 
       const [updated] = await tx.update(supplies).set(patch).where(eq(supplies.id, id)).returning();
       await recordAudit(tx, {

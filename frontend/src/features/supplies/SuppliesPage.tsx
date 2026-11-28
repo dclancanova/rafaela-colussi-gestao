@@ -11,7 +11,8 @@ import {
   type SupplyKind,
   type SupplyStatus,
 } from './supplies-api';
-import { formatPackage, formatUnitCost, kindLabels } from './supply-format';
+import { formatUnitCost } from '../../lib/units';
+import { formatPackage, kindLabels } from './supply-format';
 
 const kindOptions: { value: SupplyKind | undefined; label: string }[] = [
   { value: undefined, label: 'Todos' },
