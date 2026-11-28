@@ -1,20 +1,42 @@
 @import 'tailwindcss';
 
 /*
- * Cores da marca (decisão K): as telas usam só "brand-*" (ex.: bg-brand-700), nunca a cor direto.
- * Ponto de partida: os tons de rosa do Tailwind. Quando houver os códigos da identidade visual
- * da Rafaela Colussi, basta trocar os valores aqui e o sistema inteiro muda junto.
+ * Fontes da marca, servidas pelo próprio site (sem pedir nada ao Google a cada acesso).
+ * Identificadas pelo logo: Montserrat no nome "RAFAELA COLUSSI" e EB Garamond Itálico em
+ * "confeitaria artesanal". Se a designer indicar outras, troque aqui e em --font-sans/--font-serif.
+ */
+@import '@fontsource-variable/montserrat/wght.css';
+@import '@fontsource/eb-garamond/400-italic.css';
+
+/*
+ * Identidade visual (decisão K). Códigos tirados dos arquivos SVG do logo.
+ * As telas usam "brand-*" para a cor principal e os nomes da marca para detalhes (ex.: text-cacau).
  */
 @theme {
-  --color-brand-50: var(--color-rose-50);
-  --color-brand-100: var(--color-rose-100);
-  --color-brand-200: var(--color-rose-200);
-  --color-brand-300: var(--color-rose-300);
-  --color-brand-400: var(--color-rose-400);
-  --color-brand-500: var(--color-rose-500);
-  --color-brand-600: var(--color-rose-600);
-  --color-brand-700: var(--color-rose-700);
-  --color-brand-800: var(--color-rose-800);
-  --color-brand-900: var(--color-rose-900);
-  --color-brand-950: var(--color-rose-950);
+  --color-framboesa: #713c49;
+  --color-verde: #626653;
+  --color-cacau: #725c3a;
+  --color-amendoa: #e5e0d8;
+  --color-creme: #f7f3ec;
+  --color-caramelo: #d2ab80;
+
+  /*
+   * Escala da cor principal a partir da framboesa: tons claros misturados com o creme,
+   * escuros com preto. O 700 (botões e links) é a framboesa exata.
+   * Trocar a cor principal = trocar --color-framboesa acima.
+   */
+  --color-brand-50: color-mix(in oklab, var(--color-framboesa) 4%, var(--color-creme));
+  --color-brand-100: color-mix(in oklab, var(--color-framboesa) 10%, var(--color-creme));
+  --color-brand-200: color-mix(in oklab, var(--color-framboesa) 22%, var(--color-creme));
+  --color-brand-300: color-mix(in oklab, var(--color-framboesa) 40%, var(--color-creme));
+  --color-brand-400: color-mix(in oklab, var(--color-framboesa) 60%, var(--color-creme));
+  --color-brand-500: color-mix(in oklab, var(--color-framboesa) 78%, var(--color-creme));
+  --color-brand-600: color-mix(in oklab, var(--color-framboesa) 90%, var(--color-creme));
+  --color-brand-700: var(--color-framboesa);
+  --color-brand-800: color-mix(in oklab, var(--color-framboesa) 82%, black);
+  --color-brand-900: color-mix(in oklab, var(--color-framboesa) 65%, black);
+  --color-brand-950: color-mix(in oklab, var(--color-framboesa) 45%, black);
+
+  --font-sans: 'Montserrat Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'EB Garamond', ui-serif, Georgia, serif;
 }

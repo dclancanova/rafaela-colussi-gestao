@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router';
 import { logout } from '../features/auth/auth-api';
 import { currentUserKey, useCurrentUser } from '../features/auth/use-current-user';
+import { Monogram } from './Monogram';
 
 /** Links do menu, na ordem em que aparecem. */
 const navItems = [
@@ -28,12 +29,19 @@ export function AppLayout() {
   });
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <nav className="flex items-center gap-6">
-            <Link to="/" className="font-semibold text-brand-900">
-              Rafaela Colussi
+    <div className="min-h-screen bg-creme">
+      <header className="border-b border-amendoa bg-white">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <Link
+              to="/"
+              className="flex items-center gap-2 text-framboesa"
+              aria-label="Rafaela Colussi, início"
+            >
+              <Monogram className="h-9 w-9" />
+              <span className="hidden text-xs font-normal tracking-[0.25em] uppercase sm:inline">
+                Rafaela Colussi
+              </span>
             </Link>
             {navItems.map((item) => (
               <NavLink
