@@ -4,9 +4,9 @@
 export const labelClass = 'block text-sm font-medium text-stone-700';
 
 export const inputClass =
-  'w-full rounded-lg border border-stone-300 px-3 py-2 focus:border-rose-400 focus:ring-2 focus:ring-rose-200 focus:outline-none';
+  'w-full rounded-lg border border-stone-300 px-3 py-2 focus:border-brand-400 focus:ring-2 focus:ring-brand-200 focus:outline-none';
 
 export const primaryButtonClass =
-  'w-full rounded-lg bg-rose-700 px-4 py-2 font-medium text-white hover:bg-rose-800 disabled:opacity-60';
+  'w-full rounded-lg bg-brand-700 px-4 py-2 font-medium text-white hover:bg-brand-800 disabled:opacity-60';
 
-export const linkClass = 'font-medium text-rose-700 hover:text-rose-900 hover:underline';
+export const linkClass = 'font-medium text-brand-700 hover:text-brand-900 hover:underline';

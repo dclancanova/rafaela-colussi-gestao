@@ -1,1 +1,20 @@
 @import 'tailwindcss';
+
+/*
+ * Cores da marca (decisão K): as telas usam só "brand-*" (ex.: bg-brand-700), nunca a cor direto.
+ * Ponto de partida: os tons de rosa do Tailwind. Quando houver os códigos da identidade visual
+ * da Rafaela Colussi, basta trocar os valores aqui e o sistema inteiro muda junto.
+ */
+@theme {
+  --color-brand-50: var(--color-rose-50);
+  --color-brand-100: var(--color-rose-100);
+  --color-brand-200: var(--color-rose-200);
+  --color-brand-300: var(--color-rose-300);
+  --color-brand-400: var(--color-rose-400);
+  --color-brand-500: var(--color-rose-500);
+  --color-brand-600: var(--color-rose-600);
+  --color-brand-700: var(--color-rose-700);
+  --color-brand-800: var(--color-rose-800);
+  --color-brand-900: var(--color-rose-900);
+  --color-brand-950: var(--color-rose-950);
+}

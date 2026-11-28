@@ -6,7 +6,7 @@ export function HomePage() {
 
   return (
     <section className="space-y-2">
-      <h1 className="text-2xl font-semibold text-rose-900">Olá, {user?.name}!</h1>
+      <h1 className="text-2xl font-semibold text-brand-900">Olá, {user?.name}!</h1>
       <p className="text-stone-600">Os módulos da gestão vão aparecer aqui.</p>
     </section>
   );

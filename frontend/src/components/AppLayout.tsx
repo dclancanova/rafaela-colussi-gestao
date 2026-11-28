@@ -23,7 +23,7 @@ export function AppLayout() {
     <div className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <Link to="/" className="font-semibold text-rose-900">
+          <Link to="/" className="font-semibold text-brand-900">
             Rafaela Colussi
           </Link>
           <div className="flex items-center gap-4 text-sm">
