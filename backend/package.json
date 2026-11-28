@@ -1,6 +1,6 @@
 {
   "name": "rafaela-colussi-backend",
-  "private": "true",
+  "private": true,
   "type": "module",
   "scripts": {
     "test": "vitest run",

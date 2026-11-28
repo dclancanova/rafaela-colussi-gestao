@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link, Outlet, useNavigate } from 'react-router';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router';
 import { logout } from '../features/auth/auth-api';
 import { currentUserKey, useCurrentUser } from '../features/auth/use-current-user';
 
@@ -23,9 +23,19 @@ export function AppLayout() {
     <div className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <Link to="/" className="font-semibold text-brand-900">
-            Rafaela Colussi
-          </Link>
+          <nav className="flex items-center gap-6">
+            <Link to="/" className="font-semibold text-brand-900">
+              Rafaela Colussi
+            </Link>
+            <NavLink
+              to="/insumos"
+              className={({ isActive }) =>
+                `text-sm ${isActive ? 'font-medium text-brand-800' : 'text-stone-600 hover:text-stone-900'}`
+              }
+            >
+              Insumos
+            </NavLink>
+          </nav>
           <div className="flex items-center gap-4 text-sm">
             <span className="text-stone-600">{user?.name}</span>
             <button

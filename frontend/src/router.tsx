@@ -5,6 +5,8 @@ import { LoginPage } from './features/auth/LoginPage';
 import { RequireAuth } from './features/auth/RequireAuth';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 import { HomePage } from './features/home/HomePage';
+import { SuppliesPage } from './features/supplies/SuppliesPage';
+import { SupplyFormPage } from './features/supplies/SupplyFormPage';
 
 export const router = createBrowserRouter([
   // Páginas públicas (sem sessão).
@@ -17,7 +19,12 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <AppLayout />,
-        children: [{ index: true, element: <HomePage /> }],
+        children: [
+          { index: true, element: <HomePage /> },
+          { path: 'insumos', element: <SuppliesPage /> },
+          { path: 'insumos/novo', element: <SupplyFormPage /> },
+          { path: 'insumos/:id', element: <SupplyFormPage /> },
+        ],
       },
     ],
   },

@@ -15,6 +15,13 @@
       "when": 1795889474467,
       "tag": "0001_redundant_alex_wilder",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795891379400,
+      "tag": "0002_create_supplies",
+      "breakpoints": true
     }
   ]
 }
