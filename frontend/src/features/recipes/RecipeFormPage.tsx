@@ -36,6 +36,7 @@ import {
   type RecipeInput,
   type RecipeSummary,
 } from './recipes-api';
+import { invalidateCatalog } from '../catalog/invalidate-catalog';
 
 /** Uma página para criar (/fichas-tecnicas/nova) e editar (/fichas-tecnicas/:id). */
 export function RecipeFormPage() {
@@ -106,7 +107,8 @@ function RecipeForm({ recipe, supplies, recipes }: RecipeFormProps) {
   );
 
   const onSaved = async () => {
-    await queryClient.invalidateQueries({ queryKey: recipesKeys.all });
+    // A ficha muda o custo de outras fichas e dos produtos: atualiza o catálogo inteiro.
+    await invalidateCatalog(queryClient);
     navigate('/fichas-tecnicas');
   };
 

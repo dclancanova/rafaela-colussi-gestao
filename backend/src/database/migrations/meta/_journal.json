@@ -29,6 +29,13 @@
       "when": 1795894111260,
       "tag": "0003_create_recipes",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795895465392,
+      "tag": "0004_create_products",
+      "breakpoints": true
     }
   ]
 }

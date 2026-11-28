@@ -5,8 +5,11 @@ import { LoginPage } from './features/auth/LoginPage';
 import { RequireAuth } from './features/auth/RequireAuth';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 import { HomePage } from './features/home/HomePage';
+import { ProductFormPage } from './features/products/ProductFormPage';
+import { ProductsPage } from './features/products/ProductsPage';
 import { RecipeFormPage } from './features/recipes/RecipeFormPage';
 import { RecipesPage } from './features/recipes/RecipesPage';
+import { PricingSettingsPage } from './features/settings/PricingSettingsPage';
 import { SuppliesPage } from './features/supplies/SuppliesPage';
 import { SupplyFormPage } from './features/supplies/SupplyFormPage';
 
@@ -29,6 +32,10 @@ export const router = createBrowserRouter([
           { path: 'fichas-tecnicas', element: <RecipesPage /> },
           { path: 'fichas-tecnicas/nova', element: <RecipeFormPage /> },
           { path: 'fichas-tecnicas/:id', element: <RecipeFormPage /> },
+          { path: 'produtos', element: <ProductsPage /> },
+          { path: 'produtos/novo', element: <ProductFormPage /> },
+          { path: 'produtos/:id', element: <ProductFormPage /> },
+          { path: 'configuracoes', element: <PricingSettingsPage /> },
         ],
       },
     ],

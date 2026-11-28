@@ -1,7 +1,7 @@
 import { asc, eq, inArray } from 'drizzle-orm';
 import { db, type Database, type Transaction } from '../../database/client.js';
 import { lockRecipeGraph } from '../../database/locks.js';
-import { recipeItems, recipes, supplies } from '../../database/schema/index.js';
+import { products, recipeItems, recipes, supplies } from '../../database/schema/index.js';
 import { recordAudit } from '../../shared/audit.js';
 import { isUniqueViolation } from '../../shared/database-errors.js';
 import { AppError, NotFoundError, ValidationError } from '../../shared/errors.js';
@@ -43,7 +43,7 @@ function rethrowNameTaken(err: unknown): never {
  * Os dados de uma confeitaria (centenas de linhas) cabem folgados na memória, e assim
  * uma ficha com sub-receitas em vários níveis custa 3 consultas, e não uma por nível.
  */
-async function loadCatalog(executor: Executor) {
+export async function loadCatalog(executor: Executor) {
   const supplyRows = await executor.select().from(supplies);
   const recipeRows = await executor.select().from(recipes).orderBy(asc(recipes.name));
   const itemRows = await executor.select().from(recipeItems).orderBy(asc(recipeItems.position));
@@ -314,6 +314,20 @@ export async function updateRecipe(
             409,
             'RECIPE_IN_USE',
             `A unidade do rendimento não pode mudar: esta ficha é usada em "${parent.name}".`,
+          );
+        }
+
+        // Decisão AV: produtos também medem a ficha na unidade do rendimento.
+        const [product] = await tx
+          .select({ name: products.name })
+          .from(products)
+          .where(eq(products.recipeId, id))
+          .limit(1);
+        if (product) {
+          throw new AppError(
+            409,
+            'RECIPE_IN_USE',
+            `A unidade do rendimento não pode mudar: esta ficha é usada no produto "${product.name}".`,
           );
         }
       }

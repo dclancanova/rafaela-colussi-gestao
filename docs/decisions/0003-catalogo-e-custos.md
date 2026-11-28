@@ -27,6 +27,18 @@ AD a AJ adicionadas na etapa 1 (insumos); AK a AQ na etapa 2 (fichas técnicas),
 | AP  | Recusar (409) trocar a unidade de um insumo usado em fichas, ou a unidade do rendimento de uma ficha usada como sub-receita                                                               | As quantidades já cadastradas estão naquela unidade: 300 g não podem virar 300 un                                                |
 | AQ  | A lista de itens é enviada sempre **completa** e substitui a anterior; a auditoria guarda a lista antes e depois, só quando mudou. Fichas são arquivadas, nunca excluídas                 | Mais simples que editar linha a linha; arquivar não tira o custo das fichas que a usam                                           |
 
+AR a AW adicionadas na etapa 3 (produtos e preço), em 28/11/2026.
+
+| #   | Decisão                                                                                                                                                                                                     | Motivo                                                                                                       |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| AR  | **Produto** = o que se vende: uma ficha técnica e a quantidade dela por venda (na unidade do rendimento), mais o **preço digitado** em centavos. Ex.: "Cento de brigadeiros" = 100 un da ficha "Brigadeiro" | O custo sai das fichas; o preço é decisão comercial de vocês, o sistema só sugere                            |
+| AS  | Percentuais em **pontos-base inteiros** (20% = 2000; 20,5% = 2050)                                                                                                                                          | Mesmo motivo do dinheiro (AD): inteiros são exatos                                                           |
+| AT  | Configuração de preços numa tabela de **linha única** (`pricing_settings`, id fixo 1, garantido por `CHECK`): custos indiretos % e margem-alvo %. Só admin altera; a alteração é auditada                   | Um valor para o negócio inteiro; exceção consciente à decisão N, porque nunca existe uma segunda linha       |
+| AU  | Custo total = custo da ficha × (1 + indiretos); **margem = lucro ÷ preço**; preço sugerido = custo total ÷ (1 − margem-alvo), arredondado **para cima** no centavo. Margem-alvo limitada a 95%              | Margem sobre o preço é a forma usual ("de cada R$ 100 vendidos, sobram R$ 60"); 100% exigiria preço infinito |
+| AV  | Recusar (409) trocar a unidade do rendimento de uma ficha usada em produto (amplia a AP); produtos e fichas usam a mesma trava do mapa (AN)                                                                 | As quantidades dos produtos estão naquela unidade                                                            |
+| AW  | Produtos são arquivados, nunca excluídos; a mudança de preço fica na auditoria (`{ priceCents: { from, to } }`)                                                                                             | Pedidos (decisão C) vão guardar o preço da época; a auditoria responde "quando o preço mudou?"               |
+
 ## Pendências
 
-- **Permissões:** por enquanto qualquer usuária logada cadastra e altera insumos. Rever se o perfil `member` passar a ser usado.
+- **Permissões:** por enquanto qualquer usuária logada cadastra e altera insumos, fichas e produtos (a configuração de preços já exige admin). Rever se o perfil `member` passar a ser usado.
+- **Custos indiretos reais:** o percentual é uma estimativa. Quando o módulo financeiro existir, comparar com os gastos reais (gás, energia, taxas) e ajustar.

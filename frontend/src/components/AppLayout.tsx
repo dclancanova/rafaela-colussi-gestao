@@ -7,6 +7,8 @@ import { currentUserKey, useCurrentUser } from '../features/auth/use-current-use
 const navItems = [
   { to: '/insumos', label: 'Insumos' },
   { to: '/fichas-tecnicas', label: 'Fichas técnicas' },
+  { to: '/produtos', label: 'Produtos' },
+  { to: '/configuracoes', label: 'Configurações' },
 ];
 
 /** Moldura das páginas internas: cabeçalho com o nome da usuária e o botão de sair. */
