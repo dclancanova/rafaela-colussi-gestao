@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { env } from './config/env.js';
 import { authRouter } from './modules/auth/auth.routes.js';
+import { financeCategoriesRouter } from './modules/finance/categories.routes.js';
+import { financeRouter } from './modules/finance/finance.routes.js';
 import { healthRouter } from './modules/health/health.routes.js';
 import { productsRouter } from './modules/products/products.routes.js';
 import { recipesRouter } from './modules/recipes/recipes.routes.js';
@@ -34,6 +36,9 @@ export function createApp() {
   app.use('/api/recipes', recipesRouter);
   app.use('/api/products', productsRouter);
   app.use('/api/settings/pricing', pricingSettingsRouter);
+  // O mais específico antes: /api/finance/categories não deve passar pelo router geral do financeiro.
+  app.use('/api/finance/categories', financeCategoriesRouter);
+  app.use('/api/finance', financeRouter);
 
   // Estes dois SEMPRE por último, nesta ordem
   app.use(notFound);

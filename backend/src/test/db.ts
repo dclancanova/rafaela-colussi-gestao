@@ -13,7 +13,7 @@ afterAll(async () => {
 
 export async function resetDatabase(): Promise<void> {
   await db.execute(
-    sql`truncate table audit_log, password_reset_tokens, sessions, products, pricing_settings, recipe_items, recipes, supplies, users restart identity cascade`,
+    sql`truncate table audit_log, finance_adjustments, finance_transfers, finance_transactions, finance_categories, password_reset_tokens, sessions, products, pricing_settings, recipe_items, recipes, supplies, users restart identity cascade`,
   );
 }
 

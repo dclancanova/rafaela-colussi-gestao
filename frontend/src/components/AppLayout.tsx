@@ -9,6 +9,7 @@ const navItems = [
   { to: '/insumos', label: 'Insumos' },
   { to: '/fichas-tecnicas', label: 'Fichas técnicas' },
   { to: '/produtos', label: 'Produtos' },
+  { to: '/financeiro', label: 'Financeiro' },
   { to: '/configuracoes', label: 'Configurações' },
 ];
 
