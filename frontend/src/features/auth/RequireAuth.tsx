@@ -11,7 +11,8 @@ export function RequireAuth() {
   if (isError) {
     return <FullScreenMessage>Não foi possível conectar ao servidor. Recarregue a página.</FullScreenMessage>;
   }
-  if (!user) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  // pathname + search: volta para a mesma página com os mesmos filtros (ex.: /produtos?categoria=bolos).
+  if (!user) return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
 
   return <Outlet />;
 }

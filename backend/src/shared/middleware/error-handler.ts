@@ -35,9 +35,28 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     return;
   }
 
-  // 4. Qualquer outra coisa é um bug nosso: loga tudo, devolve o mínimo
+  // 4. Erros do Express que já apontam um problema na requisição (ex.: corpo grande demais = 413)
+  const clientStatus = clientErrorStatus(err);
+  if (clientStatus) {
+    res.status(clientStatus).json({
+      error:
+        clientStatus === 413
+          ? { code: 'PAYLOAD_TOO_LARGE', message: 'O corpo da requisição é grande demais' }
+          : { code: 'BAD_REQUEST', message: 'Requisição inválida' },
+    });
+    return;
+  }
+
+  // 5. Qualquer outra coisa é um bug nosso: loga tudo, devolve o mínimo
   logger.error({ err, method: req.method, url: req.originalUrl }, 'Erro não tratado');
   res.status(500).json({
     error: { code: 'INTERNAL_ERROR', message: 'Erro interno do servidor' },
   });
 };
+
+/** O status 4xx que o erro traz (padrão das bibliotecas do Express), ou null se não trouxer. */
+function clientErrorStatus(err: unknown): number | null {
+  if (typeof err !== 'object' || err === null || !('status' in err)) return null;
+  const { status } = err;
+  return typeof status === 'number' && status >= 400 && status < 500 ? status : null;
+}
